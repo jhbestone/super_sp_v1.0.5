@@ -1,0 +1,7 @@
+# Super SP v1.0.5
+output/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+powerbi/

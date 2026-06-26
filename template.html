@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Super SP — Advertising Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===== DESIGN TOKENS (Geist Light) ===== */
+    :root {
+      /* Gray Solid */
+      --gray-100: #f2f2f2;
+      --gray-200: #ebebeb;
+      --gray-300: #e6e6e6;
+      --gray-400: #eaeaea;
+      --gray-500: #c9c9c9;
+      --gray-600: #a8a8a8;
+      --gray-700: #8f8f8f;
+      --gray-800: #7d7d7d;
+      --gray-900: #4d4d4d;
+      --gray-1000: #171717;
+      /* Gray Alpha */
+      --gray-alpha-100: #0000000d;
+      --gray-alpha-200: #00000015;
+      --gray-alpha-300: #0000001a;
+      --gray-alpha-400: #00000014;
+      --gray-alpha-500: #00000036;
+      --gray-alpha-600: #0000003d;
+      --gray-alpha-700: #00000070;
+      /* Accent */
+      --blue-100: #f0f7ff;
+      --blue-200: #e9f4ff;
+      --blue-400: #cae7ff;
+      --blue-500: #94ccff;
+      --blue-700: #006bff;
+      --blue-800: #0059ec;
+      --blue-1000: #002359;
+      --red-100: #ffeeef;
+      --red-200: #ffe8ea;
+      --red-400: #ffd7d6;
+      --red-500: #ffb1b3;
+      --red-700: #fc0035;
+      --red-800: #ea001d;
+      --red-1000: #47000c;
+      --amber-100: #fff6de;
+      --amber-200: #fff4cf;
+      --amber-400: #ffdc73;
+      --amber-700: #ffae00;
+      --amber-900: #aa4d00;
+      --amber-1000: #561900;
+      --green-100: #ecfdec;
+      --green-200: #e5fce7;
+      --green-400: #b9f5bc;
+      --green-700: #28a948;
+      --green-800: #279141;
+      --green-1000: #003a00;
+      /* Surfaces */
+      --bg: #fafafa;
+      --panel: #ffffff;
+      --panel-soft: #fafafa;
+      /* Typography */
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", monospace;
+      /* Spacing (4px base) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      /* Radius */
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      /* Shadows — Geist */
+      --shadow-raised: 0 2px 2px rgba(0, 0, 0, 0.04);
+      --shadow-popover: 0 1px 1px rgba(0, 0, 0, 0.02), 0 4px 8px -4px rgba(0, 0, 0, 0.04), 0 16px 24px -8px rgba(0, 0, 0, 0.06);
+      --shadow-modal: 0 1px 1px rgba(0, 0, 0, 0.02), 0 8px 16px -4px rgba(0, 0, 0, 0.04), 0 24px 32px -8px rgba(0, 0, 0, 0.06);
+      /* Focus ring */
+      --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--blue-700);
+    }
+
+    /* ===== Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--gray-1000);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: var(--space-6);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== Typography ===== */
+    .heading-24 { font-size: 24px; font-weight: 600; line-height: 32px; letter-spacing: -0.96px; }
+    .heading-20 { font-size: 20px; font-weight: 600; line-height: 26px; letter-spacing: -0.4px; }
+    .heading-16 { font-size: 16px; font-weight: 600; line-height: 24px; letter-spacing: -0.32px; }
+    .heading-14 { font-size: 14px; font-weight: 600; line-height: 20px; letter-spacing: -0.28px; }
+    .label-13   { font-size: 13px; font-weight: 400; line-height: 16px; }
+    .label-12   { font-size: 12px; font-weight: 400; line-height: 16px; }
+    .label-12-mono { font-size: 12px; font-weight: 400; line-height: 16px; font-family: var(--font-mono); }
+    .copy-14    { font-size: 14px; font-weight: 400; line-height: 20px; }
+    .copy-13    { font-size: 13px; font-weight: 400; line-height: 18px; }
+    .copy-13-mono { font-size: 13px; font-weight: 400; line-height: 18px; font-family: var(--font-mono); }
+    .caption-12 { font-size: 12px; font-weight: 400; line-height: 16px; color: var(--gray-700); }
+
+    /* ===== Header Panel ===== */
+    .header-panel {
+      background: var(--panel);
+      border: 1px solid var(--gray-alpha-400);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-4);
+      box-shadow: var(--shadow-raised);
+    }
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: var(--space-6);
+      border-bottom: 1px solid var(--gray-alpha-200);
+    }
+    .hero-title h1 { font-size: 24px; font-weight: 600; line-height: 32px; letter-spacing: -0.96px; color: var(--gray-1000); }
+    .hero-title p { font-size: 13px; color: var(--gray-900); margin-top: var(--space-1); }
+    .meta-pills { display: flex; gap: var(--space-2); }
+    .pill {
+      border: 1px solid var(--gray-alpha-300);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-900);
+      background: var(--panel-soft);
+      white-space: nowrap;
+    }
+
+    /* ===== Campaign Metrics Section ===== */
+    .section-card {
+      background: var(--panel);
+      border: 1px solid var(--gray-alpha-400);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-2);
+      box-shadow: var(--shadow-raised);
+      overflow: hidden;
+    }
+    .section-header {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--gray-alpha-200);
+      background: var(--panel-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-header h3 { font-size: 14px; font-weight: 600; line-height: 20px; letter-spacing: -0.28px; color: var(--gray-1000); }
+    .section-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      padding: var(--space-3);
+      gap: var(--space-2);
+    }
+    .metric-item {
+      text-align: center;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      background: var(--panel-soft);
+    }
+    .metric-item .label { font-size: 11px; font-weight: 500; color: var(--gray-900); margin-bottom: var(--space-1); text-transform: uppercase; letter-spacing: 0.02em; }
+    .metric-item .value { font-size: 20px; font-weight: 600; line-height: 26px; letter-spacing: -0.4px; color: var(--gray-1000); }
+
+    /* ===== Spend Structure ===== */
+    .spend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: var(--space-3);
+      gap: var(--space-2);
+    }
+    .spend-item {
+      padding: var(--space-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-alpha-200);
+    }
+    .spend-item .label { font-size: 11px; font-weight: 500; color: var(--gray-900); margin-bottom: var(--space-1); text-transform: uppercase; letter-spacing: 0.02em; }
+    .spend-item .value { font-size: 18px; font-weight: 600; line-height: 24px; letter-spacing: -0.32px; }
+    .value-red { color: var(--red-700); }
+    .value-green { color: var(--green-700); }
+    .value-amber { color: var(--amber-900); }
+    .value-blue { color: var(--blue-700); }
+    .spend-pct-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 0 var(--space-3) var(--space-3);
+      gap: var(--space-2);
+    }
+    .pct-item {
+      padding: var(--space-2);
+      border-radius: var(--radius-sm);
+      background: var(--panel-soft);
+      text-align: center;
+    }
+    .pct-item .label { font-size: 10px; font-weight: 500; color: var(--gray-800); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .pct-item .value { font-size: 16px; font-weight: 600; line-height: 24px; color: var(--red-700); }
+
+    /* ===== Main Layout ===== */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: var(--space-4);
+      align-items: start;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      background: var(--panel);
+      border: 1px solid var(--gray-alpha-400);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-raised);
+      overflow: hidden;
+    }
+    .sidebar-head {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--gray-alpha-200);
+      background: var(--panel-soft);
+    }
+    .sidebar-head h2 { font-size: 14px; font-weight: 600; line-height: 20px; letter-spacing: -0.28px; }
+    .sidebar-head p { font-size: 12px; color: var(--gray-800); margin-top: var(--space-1); }
+    .category-list {
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .cat-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--gray-alpha-300);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-1000);
+      transition: background 150ms cubic-bezier(0.175, 0.885, 0.32, 1.1), border-color 150ms;
+      font-family: var(--font-sans);
+      line-height: 20px;
+    }
+    .cat-btn:hover { background: var(--gray-100); border-color: var(--gray-alpha-500); }
+    .cat-btn:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+    .cat-btn.active {
+      border-color: var(--blue-700);
+      background: var(--blue-100);
+      color: var(--blue-700);
+    }
+    .count-badge {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-800);
+      background: var(--gray-100);
+      padding: 1px 10px;
+      border-radius: var(--radius-full);
+      min-width: 24px;
+      text-align: center;
+      font-family: var(--font-mono);
+    }
+    .cat-btn.active .count-badge {
+      background: var(--blue-700);
+      color: #ffffff;
+    }
+
+    /* ===== Workspace ===== */
+    .workspace {
+      background: var(--panel);
+      border: 1px solid var(--gray-alpha-400);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-raised);
+      display: flex;
+      flex-direction: column;
+    }
+    .workspace-head {
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--gray-alpha-200);
+      background: var(--panel-soft);
+    }
+    .workspace-head h2 { font-size: 14px; font-weight: 600; line-height: 20px; letter-spacing: -0.28px; }
+
+    /* ===== Filters ===== */
+    .filters {
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--gray-alpha-200);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: var(--space-4);
+      align-items: end;
+    }
+    @media (min-width: 1200px) {
+      .filters { grid-template-columns: 2fr 1fr 1fr 1fr auto; }
+    }
+    .filter-group { display: flex; flex-direction: column; gap: var(--space-1); }
+    .filter-group label { font-size: 12px; font-weight: 500; color: var(--gray-900); text-transform: uppercase; letter-spacing: 0.04em; }
+    .filter-group input,
+    .filter-group select {
+      height: 40px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--gray-alpha-400);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--gray-1000);
+      background: var(--panel);
+      outline: none;
+      font-family: var(--font-sans);
+      line-height: 20px;
+      transition: border-color 150ms;
+    }
+    .filter-group input:focus,
+    .filter-group select:focus {
+      border-color: var(--blue-700);
+      box-shadow: var(--focus-ring);
+    }
+    .filter-group input:hover,
+    .filter-group select:hover { border-color: var(--gray-alpha-500); }
+    .btn-group { display: flex; gap: var(--space-2); }
+
+    /* Buttons — Geist */
+    .btn {
+      height: 40px;
+      padding: 0 var(--space-3);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      cursor: pointer;
+      transition: background 150ms, border-color 150ms;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+    .btn-primary {
+      background: var(--gray-1000);
+      color: var(--panel);
+      border: none;
+    }
+    .btn-primary:hover { background: #2a2a2a; }
+    .btn-secondary {
+      background: var(--panel);
+      color: var(--gray-1000);
+      border: 1px solid var(--gray-alpha-400);
+    }
+    .btn-secondary:hover { background: var(--gray-100); border-color: var(--gray-alpha-500); }
+    .btn-small {
+      height: 32px;
+      padding: 0 8px;
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    /* ===== Table ===== */
+    .table-scroll-wrap {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .table-container {
+      overflow-x: auto;
+      min-height: 400px;
+      width: 100%;
+      flex: 1;
+      scroll-behavior: smooth;
+    }
+    .table-container::-webkit-scrollbar { height: 8px; }
+    .table-container::-webkit-scrollbar-track { background: transparent; }
+    .table-container::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+    .table-container::-webkit-scrollbar-thumb:hover { background: var(--gray-500); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      table-layout: auto;
+      min-width: 1200px;
+    }
+    th {
+      padding: var(--space-3) var(--space-4);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-900);
+      background: var(--panel-soft);
+      border-bottom: 1px solid var(--gray-alpha-300);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      user-select: none;
+      cursor: pointer;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    th:hover { background: var(--gray-100); }
+    .sort-icon { font-size: 10px; margin-left: 2px; color: var(--gray-500); display: inline-block; min-width: 12px; }
+    th.sort-active .sort-icon { color: var(--blue-700); font-weight: 700; }
+
+    td {
+      padding: var(--space-3) var(--space-4);
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 18px;
+      color: var(--gray-1000);
+      border-bottom: 1px solid var(--gray-alpha-100);
+    }
+    tr:hover td { background: var(--gray-100); }
+
+    /* ===== Chips (Geist pills) ===== */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+    .chip-super { background: var(--green-100); color: var(--green-700); }
+    .chip-potential { background: var(--blue-100); color: var(--blue-700); }
+    .chip-warning { background: var(--amber-100); color: var(--amber-900); }
+    .chip-invalid { background: var(--red-100); color: var(--red-700); }
+
+    /* ===== Pagination ===== */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3) var(--space-6);
+      border-top: 1px solid var(--gray-alpha-200);
+      background: var(--panel-soft);
+      flex-shrink: 0;
+    }
+    .pagination-info { font-size: 13px; color: var(--gray-900); font-weight: 400; }
+    .pagination-controls { display: flex; align-items: center; gap: 2px; }
+    .page-btn {
+      height: 32px;
+      min-width: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--gray-alpha-300);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+      color: var(--gray-1000);
+      font-family: var(--font-sans);
+      transition: background 150ms, border-color 150ms;
+      text-align: center;
+      line-height: 30px;
+    }
+    .page-btn:hover { background: var(--gray-100); border-color: var(--gray-alpha-500); }
+    .page-btn:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+    .page-btn.active {
+      background: var(--gray-1000);
+      color: var(--panel);
+      border-color: var(--gray-1000);
+    }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-jump { display: flex; align-items: center; gap: var(--space-1); font-size: 12px; color: var(--gray-900); margin-left: var(--space-3); }
+    .page-jump input {
+      width: 48px;
+      height: 32px;
+      padding: 0 6px;
+      border: 1px solid var(--gray-alpha-400);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      text-align: center;
+      color: var(--gray-1000);
+      outline: none;
+    }
+    .page-jump input:focus { border-color: var(--blue-700); box-shadow: var(--focus-ring); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .filters { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      body { padding: var(--space-3); }
+      .hero { flex-direction: column; gap: var(--space-4); }
+      .filters { grid-template-columns: 1fr; }
+      .section-body { grid-template-columns: repeat(2, 1fr); }
+      .spend-grid { grid-template-columns: 1fr; }
+      .spend-pct-grid { grid-template-columns: 1fr; }
+      th, td { padding: var(--space-2) var(--space-3); font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header-panel">
+    <div class="hero">
+      <div class="hero-title">
+        <h1>SP 广告全景分析</h1>
+        <p>数据来源：系统解析 &middot; {{GENERATED_TIME}}</p>
+      </div>
+      <div class="meta-pills">
+        <span class="pill">目标 ACoS 30.0%</span>
+        <span class="pill" id="kpi-total-records">搜索词 0</span>
+        <span class="pill">v1.0.5 - 亚马逊广告全景分析系统</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Campaign Metrics -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3>广告活动指标</h3>
+      <span class="caption-12">基于已选广告活动计算</span>
+    </div>
+    <div class="section-body">
+      <div class="metric-item">
+        <div class="label">已选活动</div>
+        <div class="value" id="metrics-campaign-count">-</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">30天花费</div>
+        <div class="value" id="metrics-cost">-</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">点击次数</div>
+        <div class="value" id="metrics-clicks">-</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">订单</div>
+        <div class="value" id="metrics-orders">-</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">广告销售额</div>
+        <div class="value" id="metrics-sales">-</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">转化率</div>
+        <div class="value" id="metrics-conv-rate">-</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">ACoS</div>
+        <div class="value" id="metrics-acos">-</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spend Structure -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3>花费结构</h3>
+    </div>
+    <div class="spend-grid">
+      <div class="spend-item">
+        <div class="label">ASIN~不出单</div>
+        <div class="value value-red" id="spend-asin-no-order">{{ASIN_NO_ORDER}}</div>
+      </div>
+      <div class="spend-item">
+        <div class="label">ASIN~出单</div>
+        <div class="value value-green" id="spend-asin-has-order">{{ASIN_HAS_ORDER}}</div>
+      </div>
+      <div class="spend-item">
+        <div class="label">ASIN 总计</div>
+        <div class="value" id="spend-asin-total">{{ASIN_TOTAL}}</div>
+      </div>
+      <div class="spend-item">
+        <div class="label">关键词~不出单</div>
+        <div class="value value-amber" id="spend-keyword-no-order">{{KEYWORD_NO_ORDER}}</div>
+      </div>
+      <div class="spend-item">
+        <div class="label">关键词~出单</div>
+        <div class="value value-blue" id="spend-keyword-has-order">{{KEYWORD_HAS_ORDER}}</div>
+      </div>
+      <div class="spend-item">
+        <div class="label">关键词 总计</div>
+        <div class="value" id="spend-keyword-total">{{KEYWORD_TOTAL}}</div>
+      </div>
+    </div>
+    <div class="spend-pct-grid">
+      <div class="pct-item">
+        <div class="label">关键词~不出单占比</div>
+        <div class="value" id="pct-keyword-no-order">{{KEYWORD_NO_ORDER_PCT}}</div>
+      </div>
+      <div class="pct-item">
+        <div class="label">高点击~不出单占比</div>
+        <div class="value" id="pct-high-click">{{HIGH_CLICK_PCT}}</div>
+      </div>
+      <div class="pct-item">
+        <div class="label">低点击~不出单占比</div>
+        <div class="value" id="pct-low-click">{{LOW_CLICK_PCT}}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="main-layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <h2>14 维组合类型</h2>
+        <p>按分类切换视图</p>
+      </div>
+      <div class="category-list" id="categoryList">
+        <button class="cat-btn active" onclick="filterCategory('全部', event)">
+          <span>全部 14 种分类</span> <span id="count-全部" class="count-badge">0</span>
+        </button>
+        <button class="cat-btn" onclick="filterCategory('超级关键词', event)"><span>超级关键词</span> <span id="count-超级关键词" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('超级ASIN', event)"><span>超级 ASIN</span> <span id="count-超级ASIN" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('高潜力关键词', event)"><span>高潜力关键词</span> <span id="count-高潜力关键词" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('高潜力ASIN', event)"><span>高潜力 ASIN</span> <span id="count-高潜力ASIN" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('次级潜力关键词', event)"><span>次级潜力关键词</span> <span id="count-次级潜力关键词" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('次级潜力ASIN', event)"><span>次级潜力 ASIN</span> <span id="count-次级潜力ASIN" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('高竞争关键词', event)"><span>高竞争关键词</span> <span id="count-高竞争关键词" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('高成本ASIN', event)"><span>高成本 ASIN</span> <span id="count-高成本ASIN" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('低效关键词', event)"><span>低效关键词</span> <span id="count-低效关键词" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('低效ASIN', event)"><span>低效 ASIN</span> <span id="count-低效ASIN" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('无竞争力关键词', event)"><span>无竞争力关键词</span> <span id="count-无竞争力关键词" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('无竞争力ASIN', event)"><span>无竞争力 ASIN</span> <span id="count-无竞争力ASIN" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('无效关键词', event)"><span>无效关键词</span> <span id="count-无效关键词" class="count-badge">0</span></button>
+        <button class="cat-btn" onclick="filterCategory('无效ASIN', event)"><span>无效 ASIN</span> <span id="count-无效ASIN" class="count-badge">0</span></button>
+      </div>
+    </div>
+
+    <!-- Workspace -->
+    <div class="workspace">
+      <div class="workspace-head">
+        <h2>筛选与数据</h2>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-group">
+          <label>搜索</label>
+          <input type="text" id="searchInput" placeholder="广告活动 / 搜索词 / ASIN">
+        </div>
+        <div class="filter-group">
+          <label>广告组合</label>
+          <select id="portfolioSelect">
+            <option value="全部">全部组合</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>广告活动</label>
+          <select id="campaignSelect">
+            <option value="全部">全部活动</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>匹配类型</label>
+          <select id="matchSelect">
+            <option value="全部">全部匹配</option>
+            <option value="EXACT">EXACT (精准)</option>
+            <option value="PHRASE">PHRASE (词组)</option>
+            <option value="BROAD">BROAD (广泛)</option>
+            <option value="NEGATIVE_EXACT">NEGATIVE_EXACT</option>
+            <option value="-">商品投放 (-)</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="resetFilters()">重置</button>
+          <button class="btn btn-primary" onclick="exportCSV()">导出 CSV</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-scroll-wrap">
+      <div class="table-container">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable('类型')">类型 <span class="sort-icon" id="sort-类型"></span></th>
+              <th onclick="sortTable('广告组合')">广告组合 <span class="sort-icon" id="sort-广告组合"></span></th>
+              <th onclick="sortTable('广告活动名称')">广告活动名称 <span class="sort-icon" id="sort-广告活动名称"></span></th>
+              <th onclick="sortTable('广告组名称')">广告组名称 <span class="sort-icon" id="sort-广告组名称"></span></th>
+              <th onclick="sortTable('客户搜索词/ASIN')">搜索词/ASIN <span class="sort-icon" id="sort-客户搜索词/ASIN"></span></th>
+              <th onclick="sortTable('建议定向策略')">定向策略 <span class="sort-icon" id="sort-建议定向策略"></span></th>
+              <th onclick="sortTable('匹配类型')">匹配类型 <span class="sort-icon" id="sort-匹配类型"></span></th>
+              <th onclick="sortTable('建议策略洞察')">策略洞察 <span class="sort-icon" id="sort-建议策略洞察"></span></th>
+              <th onclick="sortTable('clicks')">点击量 <span class="sort-icon" id="sort-clicks"></span></th>
+              <th onclick="sortTable('cost')">花费 <span class="sort-icon" id="sort-cost"></span></th>
+              <th onclick="sortTable('sales')">销售额 <span class="sort-icon" id="sort-sales"></span></th>
+              <th onclick="sortTable('orders')">订单数 <span class="sort-icon" id="sort-orders"></span></th>
+              <th onclick="sortTable('acos')">ACoS <span class="sort-icon" id="sort-acos"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar" id="paginationBar">
+          <div class="pagination-info" id="paginationInfo">共 0 条，第 1/1 页</div>
+          <div class="pagination-controls" id="paginationControls">
+            <button class="page-btn" onclick="goPage(1)">首页</button>
+            <button class="page-btn" onclick="goPage(currentPage - 1)">‹</button>
+            <span id="pageNumbers"></span>
+            <button class="page-btn" onclick="goPage(currentPage + 1)">›</button>
+            <button class="page-btn" onclick="goPage(totalPages)">末页</button>
+            <span class="page-jump">
+              跳至 <input type="number" id="pageJumpInput" min="1" value="1" onkeydown="if(event.key==='Enter')jumpToPage()">
+              <button class="page-btn" onclick="jumpToPage()">GO</button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const mockData = [];
+
+    let currentData = mockData;
+    let currentCategory = '全部';
+    let currentPage = 1;
+    const pageSize = 50;
+    let totalPages = 1;
+    let sortColumn = null;
+    let sortDirection = null;
+
+    function getStatusClass(type) {
+      if (type.includes('超级')) return 'chip-super';
+      if (type.includes('潜力')) return 'chip-potential';
+      if (type.includes('高竞争') || type.includes('高成本')) return 'chip-warning';
+      if (type.includes('无效') || type.includes('无竞争力')) return 'chip-invalid';
+      if (type.includes('低效')) return 'chip-warning';
+      return '';
+    }
+
+    function initSelects() {
+      console.log('[Super SP] initSelects: start, total records =', mockData.length);
+      mockData.forEach(function(d) {
+        if (d['广告组合'] === '-') d['广告组合'] = 'No Portfolio';
+      });
+      window.portfolioCampaignMap = {};
+      var portfolios = [...new Set(mockData.map(function(d) { return d['广告组合']; }))];
+      console.log('[Super SP] initSelects: portfolios =', portfolios);
+      portfolios.forEach(function(p) {
+        window.portfolioCampaignMap[p] = [...new Set(mockData.filter(function(d) { return d['广告组合'] === p; }).map(function(d) { return d['广告活动名称']; }))];
+      });
+      var portSelect = document.getElementById('portfolioSelect');
+      portfolios.forEach(function(p) { portSelect.add(new Option(p, p)); });
+      var campSelect = document.getElementById('campaignSelect');
+      var allCampaigns = [...new Set(mockData.map(function(d) { return d['广告活动名称']; }))];
+      allCampaigns.forEach(function(c) { campSelect.add(new Option(c, c)); });
+      console.log('[Super SP] initSelects: done, campaigns =', allCampaigns.length);
+    }
+
+    function updateCampaignDropdown(portfolioValue) {
+      console.log('[Super SP] updateCampaignDropdown: portfolioValue =', portfolioValue);
+      var campSelect = document.getElementById('campaignSelect');
+      campSelect.innerHTML = '<option value="全部">全部活动</option>';
+      var campaigns;
+      if (portfolioValue === '全部') {
+        campaigns = [...new Set(mockData.map(function(d) { return d['广告活动名称']; }))];
+      } else {
+        campaigns = window.portfolioCampaignMap[portfolioValue] || [];
+      }
+      console.log('[Super SP] updateCampaignDropdown: campaigns =', campaigns.length);
+      campaigns.forEach(function(c) { campSelect.add(new Option(c, c)); });
+      console.log('[Super SP] updateCampaignDropdown: done, current value =', campSelect.value);
+    }
+
+    function renderTable() {
+      var tbody = document.querySelector('#dataTable tbody');
+      tbody.innerHTML = '';
+      applySort();
+      totalPages = Math.max(1, Math.ceil(currentData.length / pageSize));
+      if (currentPage > totalPages) currentPage = totalPages;
+      var start = (currentPage - 1) * pageSize;
+      var end = Math.min(start + pageSize, currentData.length);
+      var pageData = currentData.slice(start, end);
+
+      pageData.forEach(function(row) {
+        var tr = document.createElement('tr');
+        var cost = parseFloat(row.cost) || 0;
+        var sales = parseFloat(row.sales) || 0;
+        var clicks = parseFloat(row.clicks) || 0;
+        var orders = parseFloat(row.orders) || 0;
+        var acos = sales > 0 ? ((cost / sales) * 100).toFixed(1) + '%' : '0.0%';
+        var acosStyle = '';
+        if (sales > 0) {
+          var acosNum = parseFloat(acos);
+          if (acosNum < 20) acosStyle = 'style="color:var(--green-700)"';
+          else if (acosNum < 35) acosStyle = 'style="color:var(--amber-900)"';
+          else acosStyle = 'style="color:var(--red-700)"';
+        }
+        tr.innerHTML = [
+          '<td><span class="chip ', getStatusClass(row['类型']), '">', row['类型'], '</span></td>',
+          '<td>', row['广告组合'], '</td>',
+          '<td>', row['广告活动名称'], '</td>',
+          '<td>', row['广告组名称'], '</td>',
+          '<td style="font-weight: 500;">', row['客户搜索词/ASIN'], '</td>',
+          '<td>', row['建议定向策略'], '</td>',
+          '<td>', row['匹配类型'], '</td>',
+          '<td style="color: var(--gray-800);">', row['建议策略洞察'], '</td>',
+          '<td style="text-align:right;font-feature-settings:"tnum"">', clicks.toLocaleString('en-US'), '</td>',
+          '<td style="text-align:right;font-feature-settings:"tnum"">$', cost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}), '</td>',
+          '<td style="text-align:right;font-feature-settings:"tnum"">$', sales.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}), '</td>',
+          '<td style="text-align:right;font-feature-settings:"tnum"">', orders.toLocaleString('en-US'), '</td>',
+          '<td style="text-align:right;font-weight:600;font-feature-settings:"tnum"" ', acosStyle, '>', acos, '</td>'
+        ].join('');
+        tbody.appendChild(tr);
+      });
+      updateCategoryCounts();
+      renderPagination();
+    }
+
+    function renderPagination() {
+      document.getElementById('paginationInfo').textContent = '共 ' + currentData.length + ' 条，第 ' + currentPage + '/' + totalPages + ' 页';
+      var container = document.getElementById('pageNumbers');
+      container.innerHTML = '';
+      var maxVisible = 7;
+      var startP = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+      var endP = Math.min(totalPages, startP + maxVisible - 1);
+      if (endP - startP + 1 < maxVisible) startP = Math.max(1, endP - maxVisible + 1);
+      for (var i = startP; i <= endP; i++) {
+        (function(p) {
+          var btn = document.createElement('button');
+          btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+          btn.textContent = p;
+          btn.onclick = function() { goPage(p); };
+          container.appendChild(btn);
+        })(i);
+      }
+      document.getElementById('pageJumpInput').value = currentPage;
+    }
+
+    function goPage(page) {
+      if (page < 1 || page > totalPages) return;
+      currentPage = page;
+      renderTable();
+    }
+
+    function jumpToPage() {
+      var input = document.getElementById('pageJumpInput');
+      var page = parseInt(input.value);
+      if (isNaN(page) || page < 1) page = 1;
+      if (page > totalPages) page = totalPages;
+      goPage(page);
+    }
+
+    function sortTable(col) {
+      if (sortColumn === col) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : (sortDirection === 'desc' ? null : 'asc');
+      } else {
+        sortColumn = col;
+        sortDirection = 'asc';
+      }
+      applySort();
+      renderTable();
+    }
+
+    function applySort() {
+      document.querySelectorAll('th .sort-icon').forEach(function(el) { el.textContent = ''; });
+      document.querySelectorAll('th').forEach(function(el) { el.classList.remove('sort-active'); });
+      if (!sortColumn || !sortDirection) return;
+      var iconEl = document.getElementById('sort-' + sortColumn);
+      if (!iconEl) return;
+      iconEl.textContent = sortDirection === 'asc' ? '▲' : '▼';
+      var th = iconEl.closest('th');
+      if (th) th.classList.add('sort-active');
+      currentData.sort(function(a, b) {
+        var va = a[sortColumn], vb = b[sortColumn];
+        if (['cost', 'sales', 'clicks', 'orders'].includes(sortColumn)) {
+          va = parseFloat(va) || 0;
+          vb = parseFloat(vb) || 0;
+        } else if (sortColumn === 'acos') {
+          var ca = parseFloat(a.cost) || 0, sa = parseFloat(a.sales) || 0;
+          var cb = parseFloat(b.cost) || 0, sb = parseFloat(b.sales) || 0;
+          va = sa > 0 ? ca / sa : 0;
+          vb = sb > 0 ? cb / sb : 0;
+        } else {
+          va = (va || '').toString();
+          vb = (vb || '').toString();
+        }
+        if (va < vb) return sortDirection === 'asc' ? -1 : 1;
+        if (va > vb) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    function updateCategoryCounts() {
+      var categories = ['全部', '超级关键词', '超级ASIN', '高潜力关键词', '高潜力ASIN', '次级潜力关键词', '次级潜力ASIN', '高竞争关键词', '高成本ASIN', '低效关键词', '低效ASIN', '无竞争力关键词', '无竞争力ASIN', '无效关键词', '无效ASIN'];
+      categories.forEach(function(cat) {
+        var count;
+        if (cat === '全部') {
+          count = currentData.length;
+        } else {
+          count = currentData.filter(function(d) { return d['类型'] === cat; }).length;
+        }
+        var el = document.getElementById('count-' + cat);
+        if (el) el.textContent = count;
+      });
+    }
+
+    function applyFilters() {
+      var search = document.getElementById('searchInput').value.toLowerCase();
+      var portfolio = document.getElementById('portfolioSelect').value;
+      var campaign = document.getElementById('campaignSelect').value;
+      var match = document.getElementById('matchSelect').value;
+      console.log('[Super SP] applyFilters: portfolio=%s campaign=%s match=%s category=%s', portfolio, campaign, match, currentCategory);
+
+      currentData = mockData.filter(function(row) {
+        var matchSearch = row['广告活动名称'].toLowerCase().includes(search) ||
+                          row['客户搜索词/ASIN'].toLowerCase().includes(search);
+        var matchCategory = currentCategory === '全部' || row['类型'] === currentCategory;
+        var matchPortfolio = portfolio === '全部' || row['广告组合'] === portfolio;
+        var matchCampaign = campaign === '全部' || row['广告活动名称'] === campaign;
+        var matchType = match === '全部' || row['匹配类型'] === match;
+        return matchSearch && matchCategory && matchPortfolio && matchCampaign && matchType;
+      });
+
+      console.log('[Super SP] applyFilters: filtered to', currentData.length, 'records');
+      currentPage = 1;
+      sortColumn = null;
+      sortDirection = null;
+      document.querySelectorAll('th .sort-icon').forEach(function(el) { el.textContent = ''; });
+      document.querySelectorAll('th').forEach(function(el) { el.classList.remove('sort-active'); });
+      renderTable();
+      updateCampaignMetrics(currentData);
+      updateSpendStructure(currentData);
+      updateKpiRecords(currentData);
+    }
+
+    function updateSpendStructure(data) {
+      var asinNoOrder = 0, asinHasOrder = 0, asinTotal = 0;
+      var keywordNoOrder = 0, keywordHasOrder = 0, keywordTotal = 0;
+      var highClickNoOrder = 0, lowClickNoOrder = 0;
+
+      data.forEach(function(row) {
+        var cost = parseFloat(row.cost) || 0;
+        var clicks = parseFloat(row.clicks) || 0;
+        var orders = parseFloat(row.orders) || 0;
+        var term = (row['客户搜索词/ASIN'] || '').toUpperCase();
+        var isAsin = /^[A-Z0-9]{10}$/.test(term);
+
+        if (isAsin) {
+          asinTotal += cost;
+          if (orders === 0) asinNoOrder += cost;
+          else asinHasOrder += cost;
+        } else {
+          keywordTotal += cost;
+          if (orders === 0) {
+            keywordNoOrder += cost;
+            if (clicks > 17) highClickNoOrder += cost;
+            if (clicks < 5) lowClickNoOrder += cost;
+          } else {
+            keywordHasOrder += cost;
+          }
+        }
+      });
+
+      var keywordNoOrderPct = keywordTotal > 0 ? (keywordNoOrder / keywordTotal * 100) : 0;
+      var highClickPct = keywordTotal > 0 ? (highClickNoOrder / keywordTotal * 100) : 0;
+      var lowClickPct = keywordTotal > 0 ? (lowClickNoOrder / keywordTotal * 100) : 0;
+
+      var fmt = function(v) { return '$' + v.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); };
+      document.getElementById('spend-asin-no-order').textContent = fmt(asinNoOrder);
+      document.getElementById('spend-asin-has-order').textContent = fmt(asinHasOrder);
+      document.getElementById('spend-asin-total').textContent = fmt(asinTotal);
+      document.getElementById('spend-keyword-no-order').textContent = fmt(keywordNoOrder);
+      document.getElementById('spend-keyword-has-order').textContent = fmt(keywordHasOrder);
+      document.getElementById('spend-keyword-total').textContent = fmt(keywordTotal);
+      document.getElementById('pct-keyword-no-order').textContent = keywordNoOrderPct.toFixed(2) + '%';
+      document.getElementById('pct-high-click').textContent = highClickPct.toFixed(2) + '%';
+      document.getElementById('pct-low-click').textContent = lowClickPct.toFixed(2) + '%';
+    }
+
+    function updateCampaignMetrics(data) {
+      var selectedCampaigns = new Set(data.map(function(d) { return d['广告活动名称']; }));
+      var campaignCount = selectedCampaigns.size;
+      var totalCost = 0, totalClicks = 0, totalOrders = 0, totalSales = 0;
+      data.forEach(function(row) {
+        totalCost += parseFloat(row.cost) || 0;
+        totalClicks += parseFloat(row.clicks) || 0;
+        totalOrders += parseFloat(row.orders) || 0;
+        totalSales += parseFloat(row.sales) || 0;
+      });
+      var convRate = totalClicks > 0 ? ((totalOrders / totalClicks) * 100).toFixed(2) + '%' : '0.00%';
+      var acos = totalSales > 0 ? ((totalCost / totalSales) * 100).toFixed(1) + '%' : '0.0%';
+      var fmt = function(v) { return '$' + v.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); };
+      document.getElementById('metrics-campaign-count').textContent = campaignCount;
+      document.getElementById('metrics-cost').textContent = fmt(totalCost);
+      document.getElementById('metrics-clicks').textContent = totalClicks.toLocaleString('en-US');
+      document.getElementById('metrics-orders').textContent = totalOrders.toLocaleString('en-US');
+      document.getElementById('metrics-sales').textContent = fmt(totalSales);
+      document.getElementById('metrics-conv-rate').textContent = convRate;
+      document.getElementById('metrics-acos').textContent = acos;
+    }
+
+    function updateKpiRecords(data) {
+      var el = document.getElementById('kpi-total-records');
+      if (el) el.textContent = '搜索词 ' + data.length;
+    }
+
+    function filterCategory(category, evt) {
+      currentCategory = category;
+      var btns = document.querySelectorAll('.cat-btn');
+      btns.forEach(function(btn) { btn.classList.remove('active'); });
+      if (evt) evt.currentTarget.classList.add('active');
+      else btns[0].classList.add('active');
+      applyFilters();
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('portfolioSelect').value = '全部';
+      document.getElementById('matchSelect').value = '全部';
+      currentCategory = '全部';
+      updateCampaignDropdown('全部');
+      filterCategory('全部', null);
+    }
+
+    function exportCSV() {
+      if (currentData.length === 0) return alert('当前没有可导出的数据');
+      var CN_HEADERS = {
+        "类型": "类型", "广告组合": "广告组合",
+        "广告活动名称": "广告活动名称",
+        "广告组名称": "广告组名称",
+        "客户搜索词/ASIN": "客户搜索词/ASIN",
+        "建议定向策略": "建议定向策略",
+        "匹配类型": "匹配类型",
+        "建议策略洞察": "建议策略洞察",
+        "cost": "花费", "sales": "广告销售额",
+        "orders": "订单数", "clicks": "点击次数"
+      };
+      var headers = Object.keys(currentData[0]);
+      var cnHeaders = headers.map(function(h) { return CN_HEADERS[h] || h; });
+      var csvRows = [cnHeaders.join(',')];
+      currentData.forEach(function(row) {
+        var values = headers.map(function(header) {
+          var val = row[header];
+          if (['cost', 'sales'].includes(header)) return '"' + Number(val).toFixed(2) + '"';
+          if (['orders', 'clicks'].includes(header)) return '"' + Math.round(val) + '"';
+          return '"' + val + '"';
+        });
+        csvRows.push(values.join(','));
+      });
+      var blob = new Blob(['\ufeff' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      var url = window.URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'Super_SP_Analysis_' + new Date().getTime() + '.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('portfolioSelect').addEventListener('change', function() {
+      console.log('[Super SP] portfolio changed to:', this.value);
+      updateCampaignDropdown(this.value);
+      applyFilters();
+    });
+    document.getElementById('campaignSelect').addEventListener('change', applyFilters);
+    document.getElementById('matchSelect').addEventListener('change', applyFilters);
+
+    initSelects();
+    renderTable();
+    updateCategoryCounts();
+    updateCampaignMetrics(mockData);
+    updateKpiRecords(mockData);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+Super SP v1.0.5 — 使用指南
+
+## 快速运行
+
+方法 1：双击 run.bat
+方法 2：命令行 python generate.py
+
+## 输入
+
+将亚马逊广告报告放入 data/ 目录：
+- 搜索词报告（必需）
+- 广告位报告（可选）
+- 推广商品报告（可选）
+
+## 输出
+
+output/dashboard.html - 可视化大屏（浏览器打开）
+output/report.xlsx    - Excel 报告
+output/analysis.json  - JSON 数据
+
+## 分类体系
+
+14 种类型：超级/高潜力/次级潜力/高竞争/低效/无竞争力/无效（各分关键词和 ASIN）
+
+## 注意事项
+
+- 每次全量重跑，不支持增量更新
+- 大屏需要联网加载字体
